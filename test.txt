@@ -1,0 +1,10 @@
+Ouverture du fichier : Le fichier "mon_fichier.txt" est ouvert en lecture seule (O_RDONLY). Le descripteur de fichier obtenu est stocké dans fd.
+Lecture des données : La fonction read lit jusqu'à BUFFER_SIZE octets et les place dans buffer. Tant que des données sont lues, elles sont affichées à l'écran avec write().
+Vérification d'erreurs : Si read retourne -1, une erreur s'est produite et nous utilisons perror pour afficher un message d'erreur.
+Fin du fichier : Si read retourne 0, cela signifie que nous avons atteint la fin du fichier.
+Fermeture du fichier : Après la lecture, nous fermons le fichier avec close.
+Points importants
+Lecture partielle : read peut lire moins de données que demandé si le fichier contient moins d'octets disponibles, ou si une erreur se produit avant d'atteindre le nombre demandé d'octets.
+Gestion des erreurs : Lors de l'utilisation de read, il est important de vérifier le code de retour pour détecter d'éventuelles erreurs ou la fin du fichier.
+Buffers : Il est essentiel d'avoir un tampon de taille suffisante pour recevoir les données lues.
+Cette fonction est bas niveau et est particulièrement utilisée dans les applications qui nécessitent un contrôle direct sur les fichiers ou les flux d'entrée/sortie.
