@@ -6,29 +6,36 @@
 /*   By: lbard <lbard@student.42nice.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 17:23:11 by lbard             #+#    #+#             */
-/*   Updated: 2024/11/16 19:22:06 by lbard            ###   ########.fr       */
+/*   Updated: 2024/11/18 22:32:59 by lbard            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fcntl.h>
-#include <unistd.h>
+#include "get_next_line.h"
 
-#define BUFFER_SIZE 128
+#define BUFFER_SIZE 42
 
-//char	*get_next_line(int fd)
-int main()
+char	*get_next_line(int fd)
 {
-	int	fd;
-	char	buffer[BUFFER_SIZE];
-	ssize_t b;
+	static char	*buffer;
+	static int	i;
+	size_t	b;
 
-	fd = open("test.txt", O_RDONLY);
-	while ((b = read(fd, buffer, sizeof(buffer))) > 0)
+	i = 0;
+	buffer = malloc(BUFFER_SIZE);
+	if (buffer == NULL)
+		return (NULL);
+	while ((b = read(fd, buffer, 5)) > 0)
 	{
-		if ()
-			write(STDOUT_FILENO, buffer, b);
+		if (ft_newline(buffer))
+			printf("%s\n", buffer);
+		i++;
 	}
-	close(fd);
-	return 0;
+	free(buffer);
 }
 
+int main()
+{
+	int fd =  open("test.txt", O_RDONLY);
+	get_next_line(fd);
+	return 0;
+}
