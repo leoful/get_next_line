@@ -6,7 +6,7 @@
 /*   By: lbard <lbard@student.42nice.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 17:23:11 by lbard             #+#    #+#             */
-/*   Updated: 2024/11/18 22:32:59 by lbard            ###   ########.fr       */
+/*   Updated: 2024/11/19 00:04:41 by lbard            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,41 @@
 
 #define BUFFER_SIZE 42
 
+char	*read_and_accumulate(int fd, char *saved)
+{
+	char	*buffer[BUFFER_SIZE];
+	size_t	bytes;
+
+	while ((b = read(fd, buffer, b)) > 0)
+	{
+		if 
+	}
+
+
+}
+
+char	*extract_line(char *saved)
+
 char	*get_next_line(int fd)
 {
-	static char	*buffer;
-	static int	i;
+	char	*buffer;
+	int	i;
 	size_t	b;
 
 	i = 0;
 	buffer = malloc(BUFFER_SIZE);
 	if (buffer == NULL)
 		return (NULL);
-	while ((b = read(fd, buffer, 5)) > 0)
+	while ((b = read(fd, buffer, BUFFER_SIZE)) > 0)
 	{
-		if (ft_newline(buffer))
-			printf("%s\n", buffer);
-		i++;
+		while (i < b)
+		{
+			if (buffer[i] == '\n')
+			{
+				printf("%s", buffer);
+			}
+			i++;
+		}
 	}
 	free(buffer);
 }

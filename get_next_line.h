@@ -19,6 +19,12 @@
 #include <stdio.h>
 
 char	*get_next_line(int fd);
-char    *ft_newline(char *str);
+char	*ft_strjoin(char const *s1, char const *s2);
+char	*ft_strdup(const char *s);
+char	*ft_strchr(const char *s, int c);
+char	*read_and_accumulate(int fd, char *saved);
+char	*extract_line(char *saved);
+int ft_strlen(char *str);
+
 
 #endif
