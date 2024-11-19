@@ -6,7 +6,7 @@
 /*   By: lbard <lbard@student.42nice.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 17:23:11 by lbard             #+#    #+#             */
-/*   Updated: 2024/11/19 00:04:41 by lbard            ###   ########.fr       */
+/*   Updated: 2024/11/19 20:30:48 by lbard            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,20 +16,24 @@
 
 char	*read_and_accumulate(int fd, char *saved)
 {
-	char	*buffer[BUFFER_SIZE];
+	char	*buffer;
 	size_t	bytes;
+	int	i = 0;
 
-	while ((b = read(fd, buffer, b)) > 0)
+	buffer = malloc(BUFFER_SIZE);
+	if (buffer == NULL)
+		return (NULL);
+	while ((bytes = read(fd, buffer, 5)) > 0)
 	{
-		if 
+		saved = ft_strjoin(saved, buffer);
 	}
-
-
+	free(buffer);
+	return (saved);
 }
 
-char	*extract_line(char *saved)
+//char	*extract_line(char *saved)
 
-char	*get_next_line(int fd)
+/*char	*get_next_line(int fd)
 {
 	char	*buffer;
 	int	i;
@@ -52,10 +56,11 @@ char	*get_next_line(int fd)
 	}
 	free(buffer);
 }
-
+*/
 int main()
 {
+	static char *saved = NULL;
 	int fd =  open("test.txt", O_RDONLY);
-	get_next_line(fd);
+	read_and_accumulate(fd, saved);
 	return 0;
 }
