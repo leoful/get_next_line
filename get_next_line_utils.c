@@ -12,14 +12,14 @@
 
 #include "get_next_line.h"
 
-int ft_strlen(const char *str)
+int	ft_strlen(const char *str)
 {
-    int i;
+	int	i;
 
-    i = 0;
-    while (str[i])
-        i++;
-    return (i);
+	i = 0;
+	while (str[i])
+		i++;
+	return (i);
 }
 
 char	*ft_strdup(const char *s)
@@ -121,4 +121,29 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	ft_strlcpy(str, s1, all_len + 1);
 	ft_strlcat(str, s2, all_len + 1);
 	return (str);
+}
+
+char	*ft_substr(char const *s, unsigned int start, size_t len)
+{
+	size_t i;
+	char *newlen;
+	unsigned int str_len;
+
+	i = 0;
+	str_len = ft_strlen(s);
+	if (start >= str_len)
+		return (ft_strdup(""));
+	if ((start + len) > str_len)
+		len = str_len - start;
+	newlen = malloc(len + 1);
+	if (newlen == NULL)
+		return (NULL);
+	while (i < len)
+	{
+		newlen[i] = s[start];
+		i++;
+		start++;
+	}
+	newlen[i] = '\0';
+	return (newlen);
 }
