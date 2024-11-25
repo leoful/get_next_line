@@ -6,15 +6,13 @@
 /*   By: lbard <lbard@student.42nice.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 17:23:11 by lbard             #+#    #+#             */
-/*   Updated: 2024/11/19 20:30:48 by lbard            ###   ########.fr       */
+/*   Updated: 2024/11/25 21:55:23 by lbard            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-#define BUFFER_SIZE 42
-
-char	*read_and_accumulate(int fd, char *saved)
+static char	*read_and_accumulate(int fd, char *saved)
 {
 	char	*tmp;
 	char	*buffer;
@@ -22,12 +20,13 @@ char	*read_and_accumulate(int fd, char *saved)
 	buffer = malloc(BUFFER_SIZE + 1);
 	if (buffer == NULL)
 		return (NULL);
+	if (saved == NULL)
+    	saved = ft_strdup("");
 	while ((read(fd, buffer, BUFFER_SIZE)) > 0)
 	{
 		tmp = saved;
 		saved = ft_strjoin(saved, buffer);
 		free(tmp);
-		// printf("Accumulating data: %s\n", saved);
 	}
 	free(buffer);
 	if (fd == -1)
@@ -35,7 +34,7 @@ char	*read_and_accumulate(int fd, char *saved)
 	return (saved);
 }
 
-char	*extract_line(char *saved)
+static char	*extract_line(char *saved)
 {
 	char		*line;
 	int			newline;
@@ -50,8 +49,8 @@ char	*extract_line(char *saved)
 	else
 	{
 		line = ft_strdup(saved + start);
-		start = ft_strlen(saved);
 		free(saved);
+		saved = (NULL);
 	}
 	return (line);
 }
@@ -65,17 +64,16 @@ char	*get_next_line(int fd)
 		return (NULL);
 	saved = read_and_accumulate(fd, saved);
 	if (saved == NULL || saved[0] == '\0')
-		free(saved);
-	line = extract_line(saved);
-	if (line == NULL)
 	{
 		free(saved);
 		saved = NULL;
+		return (NULL);
 	}
+	line = extract_line(saved);
 	return (line);
 }
 
-int	main(void)
+/*int	main(void)
 {
 	int fd = open("test.txt", O_RDONLY);
 	char *line;
@@ -89,4 +87,4 @@ int	main(void)
 	printf("%s", line);
 	close(fd);
 	return (0);
-}
+}*/

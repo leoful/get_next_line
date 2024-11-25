@@ -6,7 +6,7 @@
 /*   By: lbard <lbard@student.42nice.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 18:48:16 by lbard             #+#    #+#             */
-/*   Updated: 2024/11/18 18:48:16 by lbard            ###   ########.fr       */
+/*   Updated: 2024/11/25 21:55:24 by lbard            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,74 +60,40 @@ char	*ft_strchr(const char *s, int c)
 	return (NULL);
 }
 
-size_t	ft_strlcat(char *dest, const char *src, size_t n)
-{
-	size_t	i;
-	size_t	j;
-	size_t	len_src;
-
-	i = ft_strlen(dest);
-	j = 0;
-	len_src = ft_strlen(src);
-	if (n <= i)
-	{
-		return (n + len_src);
-	}
-	while (src[j] && n > (i + j + 1))
-	{
-		dest[i + j] = src[j];
-		j++;
-	}
-	dest[i + j] = '\0';
-	return (i + len_src);
-}
-
-size_t	ft_strlcpy(char *dst, const char *src, size_t size)
-{
-	size_t	i;
-	size_t	len;
-
-	i = 0;
-	len = ft_strlen(src);
-	if (size > 0)
-	{
-		while (src[i] && i < size - 1)
-		{
-			dst[i] = src[i];
-			i++;
-		}
-		dst[i] = '\0';
-	}
-	return (len);
-}
-
 char	*ft_strjoin(char const *s1, char const *s2)
 {
-	int		all_len;
+	int		i;
+	int		j;
+	int		len1;
 	char	*str;
 
-	if (s1 == NULL && s2 == NULL)
+	i = 0;
+	j = 0;
+	len1 = 0;
+	if (s1)
+		len1 = ft_strlen(s1);
+	str = malloc(len1 + ft_strlen(s2) + 1);
+	if (!str)
 		return (NULL);
-	if (s1 == NULL)
+	while (s1 && s1[i])
 	{
-		str = malloc(ft_strlen(s2) + 1);
-		ft_strlcpy(str, s2, ft_strlen(s2) + 1);
-		return (str);
+		str[i] = s1[i];
+		i++;
 	}
-	all_len = ft_strlen(s1) + ft_strlen(s2);
-	str = malloc((all_len + 1) * sizeof(char));
-	if (str == NULL)
-		return (NULL);
-	ft_strlcpy(str, s1, all_len + 1);
-	ft_strlcat(str, s2, all_len + 1);
+	while (s2 && s2[j])
+	{
+		str[i + j] = s2[j];
+		j++;
+	}
+	str[i + j] = '\0';
 	return (str);
 }
 
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
-	size_t i;
-	char *newlen;
-	unsigned int str_len;
+	size_t			i;
+	char			*newlen;
+	unsigned int	str_len;
 
 	i = 0;
 	str_len = ft_strlen(s);
