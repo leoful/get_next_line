@@ -6,7 +6,7 @@
 /*   By: lbard <lbard@student.42nice.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 17:23:11 by lbard             #+#    #+#             */
-/*   Updated: 2024/11/25 21:55:23 by lbard            ###   ########.fr       */
+/*   Updated: 2024/11/26 22:31:48 by lbard            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,41 +16,48 @@ static char	*read_and_accumulate(int fd, char *saved)
 {
 	char	*tmp;
 	char	*buffer;
+	int		b;
 
-	buffer = malloc(BUFFER_SIZE + 1);
-	if (buffer == NULL)
+	buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (!buffer)
 		return (NULL);
-	if (saved == NULL)
-    	saved = ft_strdup("");
-	while ((read(fd, buffer, BUFFER_SIZE)) > 0)
+	b = (int)read(fd, buffer, BUFFER_SIZE);
+	while (b > 0)
 	{
-		tmp = saved;
-		saved = ft_strjoin(saved, buffer);
-		free(tmp);
+		buffer[b] = '\0';
+		tmp = ft_strjoin(saved, buffer);
+		if (!tmp)
+			return (NULL);
+		free(saved);
+		saved = tmp;
+		b = (int)read(fd, buffer, BUFFER_SIZE);
 	}
+	buffer[0] = '\0';
 	free(buffer);
-	if (fd == -1)
-		return (NULL);
 	return (saved);
 }
 
 static char	*extract_line(char *saved)
 {
 	char		*line;
-	int			newline;
 	static int	start = 0;
+	int			end;
 
-	newline = ft_strchr(saved + start, '\n') - (saved + start);
-	if (newline >= 0)
+	if (!saved || saved[start] == '\0')
+		return (NULL);
+	end = 0;
+	while (saved[start + end] != '\0' && saved[start + end] != '\n')
+		end++;
+	if (saved[start + end] == '\n')
+		end++;
+	line = ft_substr(saved, start, end);
+	if (!line)
+		return (NULL);
+	start += end;
+	if (saved[start] == '\0')
 	{
-		line = ft_substr(saved, start, newline + 1);
-		start = start + newline + 1;
-	}
-	else
-	{
-		line = ft_strdup(saved + start);
-		free(saved);
-		saved = (NULL);
+		start = 0;
+		saved[0] = '\0';
 	}
 	return (line);
 }
@@ -63,28 +70,42 @@ char	*get_next_line(int fd)
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	saved = read_and_accumulate(fd, saved);
-	if (saved == NULL || saved[0] == '\0')
+	if (!saved)
+		return (NULL);
+	line = extract_line(saved);
+	if (saved && saved[0] == '\0')
 	{
 		free(saved);
 		saved = NULL;
-		return (NULL);
 	}
-	line = extract_line(saved);
 	return (line);
 }
 
 /*int	main(void)
 {
-	int fd = open("test.txt", O_RDONLY);
-	char *line;
+	int		fd;
+	char	*line;
 
-	line = get_next_line(fd);
-	printf("%s", line);
-	line = get_next_line(fd);
-	printf("LINE COPIED \n");
-	printf("%s", line);
-	line = get_next_line(fd);
-	printf("%s", line);
+	fd = open("onechar.txt", O_RDONLY);
+	while ((line = get_next_line(fd)) != NULL)
+	{
+		printf("Line: %s\n", line);
+		free(line);
+	}
+	close(fd);
+	fd = open("empty.txt", O_RDONLY);
+	while ((line = get_next_line(fd)) != NULL)
+	{
+		printf("Line: %s", line);
+		free(line);
+	}
+	close(fd);
+	fd = open("lines.txt", O_RDONLY);
+	while ((line = get_next_line(fd)) != NULL)
+	{
+		printf("Line: %s", line);
+		free(line);
+	}
 	close(fd);
 	return (0);
 }*/
