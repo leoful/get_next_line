@@ -6,7 +6,7 @@
 /*   By: lbard <lbard@student.42nice.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 17:23:11 by lbard             #+#    #+#             */
-/*   Updated: 2024/11/26 22:31:48 by lbard            ###   ########.fr       */
+/*   Updated: 2024/11/27 03:29:22 by lbard            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,10 @@ static char	*read_and_accumulate(int fd, char *saved)
 			return (NULL);
 		free(saved);
 		saved = tmp;
+		if (ft_strchr(buffer, '\n'))
+			break ;
 		b = (int)read(fd, buffer, BUFFER_SIZE);
 	}
-	buffer[0] = '\0';
 	free(buffer);
 	return (saved);
 }
@@ -40,25 +41,19 @@ static char	*read_and_accumulate(int fd, char *saved)
 static char	*extract_line(char *saved)
 {
 	char		*line;
+	char		*newline_pos;
 	static int	start = 0;
-	int			end;
 
 	if (!saved || saved[start] == '\0')
 		return (NULL);
-	end = 0;
-	while (saved[start + end] != '\0' && saved[start + end] != '\n')
-		end++;
-	if (saved[start + end] == '\n')
-		end++;
-	line = ft_substr(saved, start, end);
+	newline_pos = ft_strchr(saved + start, '\n');
+	if (newline_pos)
+		line = ft_substr(saved, start, newline_pos - (saved + start) + 1);
+	else
+		line = ft_substr(saved, start, ft_strlen(saved + start));
 	if (!line)
 		return (NULL);
-	start += end;
-	if (saved[start] == '\0')
-	{
-		start = 0;
-		saved[0] = '\0';
-	}
+	start += ft_strlen(line);
 	return (line);
 }
 
@@ -73,11 +68,6 @@ char	*get_next_line(int fd)
 	if (!saved)
 		return (NULL);
 	line = extract_line(saved);
-	if (saved && saved[0] == '\0')
-	{
-		free(saved);
-		saved = NULL;
-	}
 	return (line);
 }
 
@@ -86,24 +76,24 @@ char	*get_next_line(int fd)
 	int		fd;
 	char	*line;
 
-	fd = open("onechar.txt", O_RDONLY);
+	fd = open("42ln.txt", O_RDONLY);
 	while ((line = get_next_line(fd)) != NULL)
 	{
 		printf("Line: %s\n", line);
 		free(line);
 	}
 	close(fd);
-	fd = open("empty.txt", O_RDONLY);
+	fd = open("42.txt", O_RDONLY);
 	while ((line = get_next_line(fd)) != NULL)
 	{
 		printf("Line: %s", line);
 		free(line);
 	}
 	close(fd);
-	fd = open("lines.txt", O_RDONLY);
+	fd = open("43ln.txt", O_RDONLY);
 	while ((line = get_next_line(fd)) != NULL)
 	{
-		printf("Line: %s", line);
+		printf("%s", line);
 		free(line);
 	}
 	close(fd);

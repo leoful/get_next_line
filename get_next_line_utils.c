@@ -6,7 +6,7 @@
 /*   By: lbard <lbard@student.42nice.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 18:48:16 by lbard             #+#    #+#             */
-/*   Updated: 2024/11/26 21:26:06 by lbard            ###   ########.fr       */
+/*   Updated: 2024/11/27 03:29:06 by lbard            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,49 +41,23 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 	return (len);
 }
 
-size_t	ft_strlcat(char *dest, const char *src, size_t n)
-{
-	size_t	i;
-	size_t	j;
-	size_t	len_src;
-
-	i = ft_strlen(dest);
-	j = 0;
-	len_src = ft_strlen(src);
-	if (n <= i)
-	{
-		return (n + len_src);
-	}
-	while (src[j] && n > (i + j + 1))
-	{
-		dest[i + j] = src[j];
-		j++;
-	}
-	dest[i + j] = '\0';
-	return (i + len_src);
-}
-
 char	*ft_strjoin(char const *s1, char const *s2)
 {
-	int		all_len;
+	size_t	len1;
+	size_t	len2;
 	char	*str;
 
+	if (s1 == NULL)
+		s1 = "";
 	if (s2 == NULL)
 		return (NULL);
-	if (s1 == NULL)
-	{
-		str = malloc((ft_strlen(s2) + 1) * sizeof(char));
-		if (!str)
-			return (NULL);
-		ft_strlcpy(str, s2, ft_strlen(s2) + 1);
-		return (str);
-	}
-	all_len = ft_strlen(s1) + ft_strlen(s2);
-	str = malloc((all_len + 1) * sizeof(char));
+	len1 = ft_strlen(s1);
+	len2 = ft_strlen(s2);
+	str = malloc((len1 + len2 + 1) * sizeof(char));
 	if (str == NULL)
 		return (NULL);
-	ft_strlcpy(str, s1, all_len + 1);
-	ft_strlcat(str, s2, all_len + 1);
+	ft_strlcpy(str, s1, len1 + 1);
+	ft_strlcpy(str + len1, s2, len2 + 1);
 	return (str);
 }
 
@@ -110,4 +84,20 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	}
 	newlen[i] = '\0';
 	return (newlen);
+}
+
+char	*ft_strchr(const char *s, int c)
+{
+	int	i;
+
+	i = 0;
+	while (s[i])
+	{
+		if (s[i] == (char)c)
+			return ((char *)&s[i]);
+		i++;
+	}
+	if (c == '\0')
+		return ((char *)&s[i]);
+	return (NULL);
 }
