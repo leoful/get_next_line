@@ -6,12 +6,15 @@
 /*   By: lbard <lbard@student.42nice.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 17:23:11 by lbard             #+#    #+#             */
-/*   Updated: 2024/11/27 03:29:22 by lbard            ###   ########.fr       */
+/*   Updated: 2024/11/27 22:43:31 by lbard            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
+/*
+ * @Read from fd and accumulate the text in saved.
+ */
 static char	*read_and_accumulate(int fd, char *saved)
 {
 	char	*tmp;
@@ -21,7 +24,7 @@ static char	*read_and_accumulate(int fd, char *saved)
 	buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buffer)
 		return (NULL);
-	b = (int)read(fd, buffer, BUFFER_SIZE);
+	b = read(fd, buffer, BUFFER_SIZE);
 	while (b > 0)
 	{
 		buffer[b] = '\0';
@@ -32,28 +35,33 @@ static char	*read_and_accumulate(int fd, char *saved)
 		saved = tmp;
 		if (ft_strchr(buffer, '\n'))
 			break ;
-		b = (int)read(fd, buffer, BUFFER_SIZE);
+		b = read(fd, buffer, BUFFER_SIZE);
 	}
 	free(buffer);
 	return (saved);
 }
 
-static char	*extract_line(char *saved)
+/*
+ * @Fetch line in new char and updates saved for the next call.
+ */
+static char	*fetch_line(char *saved)
 {
-	char		*line;
-	char		*newline_pos;
-	static int	start = 0;
+	char	*line;
+	char	*newline_pos;
 
-	if (!saved || saved[start] == '\0')
+	if (!saved || *saved == '\0')
 		return (NULL);
-	newline_pos = ft_strchr(saved + start, '\n');
+	newline_pos = ft_strchr(saved, '\n');
 	if (newline_pos)
-		line = ft_substr(saved, start, newline_pos - (saved + start) + 1);
+		line = ft_substr(saved, 0, newline_pos - saved + 1);
 	else
-		line = ft_substr(saved, start, ft_strlen(saved + start));
+		line = ft_substr(saved, 0, ft_strlen(saved));
 	if (!line)
 		return (NULL);
-	start += ft_strlen(line);
+	if (newline_pos)
+		ft_strlcpy(saved, newline_pos + 1, ft_strlen(newline_pos + 1) + 1);
+	else
+		saved[0] = '\0';
 	return (line);
 }
 
@@ -67,32 +75,31 @@ char	*get_next_line(int fd)
 	saved = read_and_accumulate(fd, saved);
 	if (!saved)
 		return (NULL);
-	line = extract_line(saved);
+	line = fetch_line(saved);
+	if (saved && *saved == '\0')
+	{
+		free(saved);
+		saved = NULL;
+	}
 	return (line);
 }
 
-/*int	main(void)
+/*int main(void)
 {
-	int		fd;
-	char	*line;
+	int fd;
+	char *line;
 
-	fd = open("42ln.txt", O_RDONLY);
-	while ((line = get_next_line(fd)) != NULL)
+	fd = open("story.txt", O_RDONLY);
+	if (fd < 0)
 	{
-		printf("Line: %s\n", line);
-		free(line);
+		perror("Error opening file");
+		return (1);
 	}
-	close(fd);
-	fd = open("42.txt", O_RDONLY);
-	while ((line = get_next_line(fd)) != NULL)
+	while (1)
 	{
-		printf("Line: %s", line);
-		free(line);
-	}
-	close(fd);
-	fd = open("43ln.txt", O_RDONLY);
-	while ((line = get_next_line(fd)) != NULL)
-	{
+		line = get_next_line(fd);
+		if (!line)
+			break ;
 		printf("%s", line);
 		free(line);
 	}
